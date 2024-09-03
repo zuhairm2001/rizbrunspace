@@ -1,26 +1,45 @@
 import React, { useState, useEffect } from 'react'
 
-const images = [
-
+const desktopImages = [
   'images/slideshow1.png',
   'images/slideshow2.png',
   'images/slideshow3.png'
 ]
 
+const mobileImages = [
+  'images/mobile-slideshow1.png',
+  'images/mobile-slideshow2.png',
+  'images/slideshow3.png'
+]
+
 function Slideshow() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % images.length)
-    }, 5000) // Change slide every 5 seconds
+      setCurrentSlide((prev) => (prev + 1) % (isMobile ? mobileImages.length : desktopImages.length))
+    }, 5000)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [isMobile])
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % images.length)
+    setCurrentSlide((prev) => (prev + 1) % (isMobile ? mobileImages.length : desktopImages.length))
   }
+
+  const images = isMobile ? mobileImages : desktopImages
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -52,7 +71,7 @@ interface MenuProps {
 function Menu({ isOpen, onClose }: MenuProps) {
   return (
     <div
-      className={`fixed top-0 left-0 w-64 h-full bg-white transform transition-transform duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 w-full sm:w-64 h-full bg-white transform transition-transform duration-300 ease-in-out ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } z-50`}
     >
@@ -79,15 +98,15 @@ export default function HomePage() {
 
   return (
     <div className="relative">
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 ">
-      <button
-        className="text-2xl text-white hover:text-gray-300 transition-colors duration-300"
-        onClick={() => setMenuOpen(true)}
-      >
-        ☰
-      </button>
-      <h1 className="text-2xl font-bold text-white">Riz Brun Space</h1>
-    </header>
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4">
+        <button
+          className="text-2xl text-white hover:text-gray-300 transition-colors duration-300"
+          onClick={() => setMenuOpen(true)}
+        >
+          ☰
+        </button>
+        <h1 className="text-xl sm:text-2xl font-bold text-white">Riz Brun Space</h1>
+      </header>
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       <Slideshow />
     </div>
