@@ -59,12 +59,6 @@ function Slideshow() {
           }`}
         />
       ))}
-      <button
-        className="absolute bottom-4 right-4 px-4 py-2 bg-black bg-opacity-50 text-white hover:bg-opacity-75 transition-colors duration-300"
-        onClick={nextSlide}
-      >
-        Next
-      </button>
     </div>
   );
 }
